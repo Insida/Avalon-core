@@ -1,2 +1,2 @@
 # Avalon-core
-Virtual reality shop assistant
+Virtual reality park shop assistant
