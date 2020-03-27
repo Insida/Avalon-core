@@ -30,7 +30,7 @@
                 <Image Source="line.png" Height="30" Width="30"/>
             </Button>
         </Menu>
-        <Grid x:Name="MainWindowGrid" HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Visibility="Visible">
+        <Grid x:Name="MainWindowGrid" HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Visibility="Hidden">
             <DataGrid x:Name="DGV1" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="721" Margin="20,24,0,0" Width="1052" BorderBrush="#FF464646" Foreground="#FF232323" HorizontalGridLinesBrush="#FF111111" VerticalGridLinesBrush="#FF363535" OpacityMask="Gray" VerticalAlignment="Top" FontFamily="Segoe UI">
                 <DataGrid.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -92,12 +92,12 @@
                 </Rectangle.Fill>
             </Rectangle>
             <Label x:Name="GameNameLabel" Content="Название" HorizontalAlignment="Left" Margin="1148,45,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Segoe UI"/>
-            <TextBox x:Name="GNTB" HorizontalAlignment="Left" Height="29" Margin="1254,51,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI" TextChanged="TryToFillClient"/>
+            <TextBox x:Name="GNTB" HorizontalAlignment="Left" Height="29" Margin="1254,51,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI"/>
             <Label Content="Описание" HorizontalAlignment="Left" Margin="1148,109,0,0" VerticalAlignment="Top" FontFamily="Segoe UI" Foreground="White"/>
             <TextBox x:Name="GDTB" HorizontalAlignment="Left" Height="209" Margin="1254,115,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI"/>
             <Button Content="Сохранить изменения" HorizontalAlignment="Left" Margin="1148,392,0,0" VerticalAlignment="Top" Width="482" FontFamily="Segoe UI"/>
         </Grid>
-        <Grid HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Name="ZonesGrid" Visibility="Hidden">
+        <Grid HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Name="ZonesGrid" Visibility="Visible">
             <DataGrid x:Name="ZonesDGV" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="721" Margin="20,24,0,0" Width="1052" BorderBrush="#FF464646" Foreground="Black" HorizontalGridLinesBrush="#FF111111" VerticalGridLinesBrush="#FF363535" OpacityMask="Gray" VerticalAlignment="Top" FontFamily="Segoe UI">
                 <DataGrid.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -114,7 +114,17 @@
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
-            <Button Content="Сохранить изменения" HorizontalAlignment="Left" Margin="1148,392,0,0" VerticalAlignment="Top" Width="482" FontFamily="Segoe UI"/>
+            <Label x:Name="JustLabel" Content="Клиент" HorizontalAlignment="Left" Margin="1148,45,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Segoe UI"/>
+            <TextBox x:Name="ZNTB" HorizontalAlignment="Left" Height="29" Margin="1254,51,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI"/>
+            <Label x:Name="JustLabel_Copy" Content="Тип" HorizontalAlignment="Left" Margin="1148,97,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Segoe UI"/>
+            <ComboBox x:Name="ZTCB" HorizontalAlignment="Left" Margin="1254,101,0,0" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI"/>
+            <Label x:Name="JustLabel_Copy1" Content="10" HorizontalAlignment="Left" Margin="1148,149,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Segoe UI"/>
+            <TextBox x:Name="ZNTB_Copy1" HorizontalAlignment="Left" Height="29" Margin="1254,155,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" FontFamily="Segoe UI"/>
+            <Label x:Name="JustLabel_Copy2" Content="30" HorizontalAlignment="Left" Margin="1148,201,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Segoe UI"/>
+            <TextBox x:Name="ZNTB_Copy2" HorizontalAlignment="Left" Height="29" Margin="1254,207,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" FontFamily="Segoe UI"/>
+            <Label x:Name="JustLabel_Copy3" Content="60" HorizontalAlignment="Left" Margin="1148,253,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Segoe UI"/>
+            <TextBox x:Name="ZNTB_Copy" HorizontalAlignment="Left" Height="29" Margin="1254,259,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" FontFamily="Segoe UI"/>
+            <Button Content="Сохранить изменения" HorizontalAlignment="Left" Margin="1148,314,0,0" VerticalAlignment="Top" Width="482" FontFamily="Segoe UI"/>
         </Grid>
     </Grid>
 </Window>

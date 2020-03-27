@@ -51,6 +51,8 @@ namespace AvalonCore
             public string sixtyminprice { get; set; }
         }
 
+
+
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -220,9 +222,25 @@ namespace AvalonCore
                 SqlConnection con = new SqlConnection(conn);
                 SqlConnection con1 = new SqlConnection(conn);
                 con.Open();
-                string getgames = "Select zonename,zonetypeid,tenminprice,thirtyminprice,sixtyminprice from zones";
-                SqlCommand cmd = new SqlCommand(getgames, con);
+                string gettypes = "Select zonetypename from zonetypes";
+                SqlCommand cmd = new SqlCommand(gettypes, con);
                 SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        ZTCB.Items.Add(reader.GetValue(0).ToString());
+                    }
+                }
+
+
+                con.Close(); con.Open();
+
+
+
+                string getgames = "Select zonename,zonetypeid,tenminprice,thirtyminprice,sixtyminprice from zones";
+                cmd = new SqlCommand(getgames, con);
+                reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())
