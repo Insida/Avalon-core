@@ -96,7 +96,7 @@ namespace AvalonCore
             col2.Header = "Зона"; col2.Binding = new Binding("zone"); col2.Width = 261;
             DGV1.Columns.Add(col2);
             col3.Header = "Время"; col3.Binding = new Binding("playtime"); col3.Width = 261;
-            DGV1.Columns.Add(col3); 
+            DGV1.Columns.Add(col3);
             col4.Header = "Описание"; col4.Binding = new Binding("orderdesc"); col4.Width = 261;
             DGV1.Columns.Add(col4);
             DGV1.MaxColumnWidth = 261; DGV1.MinColumnWidth = 261;
@@ -158,7 +158,7 @@ namespace AvalonCore
                         cmd = new SqlCommand(getzbyid, con1);
                         object getzone = cmd.ExecuteScalar();
                         zone = getzone.ToString();
-                        DGV1.Items.Add(new Order() {client = fio,zone = zone,playtime=time,orderdesc=desc });
+                        DGV1.Items.Add(new Order() { client = fio, zone = zone, playtime = time, orderdesc = desc });
                     }
                 }
             }
@@ -182,14 +182,14 @@ namespace AvalonCore
                 string getgames = "Select gamename,gamedesc from games";
                 SqlCommand cmd = new SqlCommand(getgames, con);
                 SqlDataReader reader = cmd.ExecuteReader();
-                if(reader.HasRows)
+                if (reader.HasRows)
                 {
-                    while(reader.Read())
+                    while (reader.Read())
                     {
                         GamesDGV.Items.Add(new Game { gamename = reader.GetValue(0).ToString(), gamedesc = reader.GetValue(1).ToString() });
-                    }     
+                    }
                 }
-                
+
             }
             catch (SqlException ex)
             {
@@ -249,7 +249,7 @@ namespace AvalonCore
                         con1.Open();
                         cmd = new SqlCommand(getbyzoneid, con1);
                         object getzonetype = cmd.ExecuteScalar();
-                        ZonesDGV.Items.Add(new Zone { zonename = reader.GetValue(0).ToString(), zonetypeid =getzonetype.ToString(), tenminprice = reader.GetValue(2).ToString(),
+                        ZonesDGV.Items.Add(new Zone { zonename = reader.GetValue(0).ToString(), zonetypeid = getzonetype.ToString(), tenminprice = reader.GetValue(2).ToString(),
                             thirtyminprice = reader.GetValue(3).ToString(), sixtyminprice = reader.GetValue(4).ToString() });
                     }
                 }
@@ -276,10 +276,10 @@ namespace AvalonCore
             {
                 while (reader.Read())
                 {
-                    if (reader.GetValue(0).ToString().StartsWith(fio) && TB1.Text.Length>3) // Автозаполнение при нажатом Enter
+                    if (reader.GetValue(0).ToString().StartsWith(fio) && TB1.Text.Length > 3) // Автозаполнение при нажатом Enter
                     {
                         labelfio.Content = reader.GetValue(0).ToString();
-                        if(Keyboard.IsKeyDown(Key.Enter))
+                        if (Keyboard.IsKeyDown(Key.Enter))
                         {
                             TB1.Text = labelfio.Content.ToString();
                             labelfio.Content = "";
@@ -296,6 +296,62 @@ namespace AvalonCore
                 }
             }
             con.Close();
+        }
+
+        private void AddOrderButton(object sender, RoutedEventArgs e)
+        {
+            if (TB1.Text.Length != 0 && TBNum.Text.Length != 0 && CB1.Text.Length != 0 && CBTime.Text.Length != 0 && CB2.Text.Length != 0 && TBOrderDesc.Text.Length != 0)
+            {
+                try
+                {
+                    SqlConnection con = new SqlConnection(conn);
+                    con.Open();
+                    string strsql = "if 0=(select count(num) from clients where num = '" + TBNum.Text + "') if 0=(select count(fio) from clients where fio = '" + TB1.Text + "') INSERT INTO [clients] VALUES(" + "'" + TB1.Text + "','" + TBNum.Text + "')";
+                    SqlCommand cmd = new SqlCommand(strsql, con);
+                    if (cmd.ExecuteNonQuery() == 1)
+                        MessageBox.Show("Запись успешно добавлена.");
+                    con.Close();
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                try
+                {
+                    SqlConnection con = new SqlConnection(conn);
+                    con.Open();
+                    //string strsql = "select clientid from clients where fio = '" + TB1.Text + "'"+"select zoneid from zones where zonename = '" + CB1.Text + "'";
+                    string strsql = "select clientid from clients where fio = '" + TB1.Text+"'";
+                    string getzid = "select zoneid from zones where zonename = '" + CB1.Text+"'";
+                    SqlCommand cmd = new SqlCommand(strsql, con);
+                    SqlCommand cmd1 = new SqlCommand(getzid, con);
+                    object cid = cmd.ExecuteScalar();
+                    object zid = cmd1.ExecuteScalar();
+                    MessageBox.Show(cid.ToString());
+                    //if (reader.HasRows)
+                    //    while (reader.Read())
+                            strsql = "INSERT INTO [orders] VALUES('" + cid.ToString() + "','" + zid.ToString() + "','" + CBTime.Text.ToString().Remove(2) + "','" + TBOrderDesc.Text +" "+ CB2.Text.ToString() +"')";
+                    con.Close(); con.Open();
+                    cmd = new SqlCommand(strsql, con);
+                    if (cmd.ExecuteNonQuery() == 1)
+                        MessageBox.Show("Запись успешно добавлена.");
+                    con.Close();
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else MessageBox.Show("Неверно введены данные");
+        }
+
+        private void ReloadMainClick(object sender, RoutedEventArgs e)
+        {
+            DGV1.Columns.Clear();
+            DGV1.Items.Clear();
+            CB1.Items.Clear();
+            CB2.Items.Clear();
+            FillMainGrid();
         }
     }
 }
