@@ -21,7 +21,7 @@
             </Menu.Background>
             <MenuItem Header="Главная" Foreground="White" FontSize="25" Margin="200,20,200,20" Click="Main_Click"/>
             <MenuItem Header="Игры" RenderTransformOrigin="0.5,0.5" Foreground="White" FontSize="25" Margin="-150,20,70,20" Click="Games_Click"/>
-            <MenuItem Header="Зоны" Foreground="White" FontSize="25" Margin="-20,20,70,20" />
+            <MenuItem Header="Зоны" Foreground="White" FontSize="25" Margin="-20,20,70,20" Click="Zone_Click" />
             <Image Height="80" Width="180" Margin="-1085,0,0,0" Source="avalon-logo.png" Stretch="Fill"/>
             <Button Name="CloseButton" Width="35" Height="35" HorizontalAlignment="Right" Margin="-1020" Click="CloseButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
                 <Image Source="cross.png" Height="30" Width="30"/>
@@ -30,8 +30,8 @@
                 <Image Source="line.png" Height="30" Width="30"/>
             </Button>
         </Menu>
-        <Grid x:Name="MainWindowGrid" HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Opacity="100">
-            <DataGrid x:Name="DGV1" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="721" Margin="20,24,0,0" Width="1051" BorderBrush="#FF464646" Foreground="Black" HorizontalGridLinesBrush="#FF111111" VerticalGridLinesBrush="#FF363535" OpacityMask="Gray" SelectionChanged="DataGrid_SelectionChanged" VerticalAlignment="Top" FontFamily="Segoe UI">
+        <Grid x:Name="MainWindowGrid" HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Visibility="Visible">
+            <DataGrid x:Name="DGV1" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="721" Margin="20,24,0,0" Width="1052" BorderBrush="#FF464646" Foreground="#FF232323" HorizontalGridLinesBrush="#FF111111" VerticalGridLinesBrush="#FF363535" OpacityMask="Gray" VerticalAlignment="Top" FontFamily="Segoe UI">
                 <DataGrid.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FF363636" Offset="0"/>
@@ -74,8 +74,8 @@
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
-        <Grid HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Name="GamesGrid" Opacity="0" Visibility="Hidden">
-            <DataGrid x:Name="GamesDGV" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="721" Margin="20,24,0,0" Width="1051" BorderBrush="#FF464646" Foreground="Black" HorizontalGridLinesBrush="#FF111111" VerticalGridLinesBrush="#FF363535" OpacityMask="Gray" SelectionChanged="DataGrid_SelectionChanged" VerticalAlignment="Top" FontFamily="Segoe UI">
+        <Grid HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Name="GamesGrid" Visibility="Hidden">
+            <DataGrid x:Name="GamesDGV" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="721" Margin="20,24,0,0" Width="1052" BorderBrush="#FF464646" Foreground="Black" HorizontalGridLinesBrush="#FF111111" VerticalGridLinesBrush="#FF363535" OpacityMask="Gray" VerticalAlignment="Top" FontFamily="Segoe UI">
                 <DataGrid.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FF363636" Offset="0"/>
@@ -91,6 +91,30 @@
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
+            <Label x:Name="GameNameLabel" Content="Название" HorizontalAlignment="Left" Margin="1148,45,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Segoe UI"/>
+            <TextBox x:Name="GNTB" HorizontalAlignment="Left" Height="29" Margin="1254,51,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI" TextChanged="TryToFillClient"/>
+            <Label Content="Описание" HorizontalAlignment="Left" Margin="1148,109,0,0" VerticalAlignment="Top" FontFamily="Segoe UI" Foreground="White"/>
+            <TextBox x:Name="GDTB" HorizontalAlignment="Left" Height="209" Margin="1254,115,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI"/>
+            <Button Content="Сохранить изменения" HorizontalAlignment="Left" Margin="1148,392,0,0" VerticalAlignment="Top" Width="482" FontFamily="Segoe UI"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Name="ZonesGrid" Visibility="Hidden">
+            <DataGrid x:Name="ZonesDGV" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="721" Margin="20,24,0,0" Width="1052" BorderBrush="#FF464646" Foreground="Black" HorizontalGridLinesBrush="#FF111111" VerticalGridLinesBrush="#FF363535" OpacityMask="Gray" VerticalAlignment="Top" FontFamily="Segoe UI">
+                <DataGrid.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF363636" Offset="0"/>
+                        <GradientStop Color="#FF444242" Offset="1"/>
+                    </LinearGradientBrush>
+                </DataGrid.Background>
+            </DataGrid>
+            <Rectangle HorizontalAlignment="Left" Height="721" Margin="1130,24,0,0" Stroke="#FF444242" VerticalAlignment="Top" Width="526">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF363636" Offset="0"/>
+                        <GradientStop Color="#FF444242" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Button Content="Сохранить изменения" HorizontalAlignment="Left" Margin="1148,392,0,0" VerticalAlignment="Top" Width="482" FontFamily="Segoe UI"/>
         </Grid>
     </Grid>
 </Window>
