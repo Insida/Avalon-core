@@ -91,6 +91,8 @@ namespace AvalonCore
             DataGridTextColumn col2 = new DataGridTextColumn();
             DataGridTextColumn col3 = new DataGridTextColumn();
             DataGridTextColumn col4 = new DataGridTextColumn();
+           
+
             col1.Header = "ФИО"; col1.Binding = new Binding("client"); col1.Width = 261;
             DGV1.Columns.Add(col1);
             col2.Header = "Зона"; col2.Binding = new Binding("zone"); col2.Width = 261;
@@ -99,6 +101,8 @@ namespace AvalonCore
             DGV1.Columns.Add(col3);
             col4.Header = "Описание"; col4.Binding = new Binding("orderdesc"); col4.Width = 261;
             DGV1.Columns.Add(col4);
+
+
             DGV1.MaxColumnWidth = 261; DGV1.MinColumnWidth = 261;
 
 
@@ -124,6 +128,7 @@ namespace AvalonCore
                 }
                 con.Close(); con.Open(); // Переоткрытие соедениния
 
+
                 get = "Select gamename from games"; // Заполнение CB2
                 cmd = new SqlCommand(get, con);
                 reader = cmd.ExecuteReader();
@@ -134,9 +139,8 @@ namespace AvalonCore
                         CB2.Items.Add(reader.GetValue(0).ToString());
                     }
                 }
-
-
                 con.Close(); con.Open();
+
 
                 get = "Select * from orders"; // Заполнение CB2
                 string getcbyid, getzbyid, time, desc, fio, zone;
@@ -171,10 +175,14 @@ namespace AvalonCore
         {
             DataGridTextColumn col1 = new DataGridTextColumn();
             DataGridTextColumn col2 = new DataGridTextColumn();
+
+
             col1.Header = "Название"; col1.Binding = new Binding("gamename"); col1.Width = 522;
             GamesDGV.Columns.Add(col1);
             col2.Header = "Описание"; col2.Binding = new Binding("gamedesc"); col2.Width = 522;
             GamesDGV.Columns.Add(col2);
+
+
             try
             {
                 SqlConnection con = new SqlConnection(conn);
@@ -203,6 +211,8 @@ namespace AvalonCore
             DataGridTextColumn col3 = new DataGridTextColumn();
             DataGridTextColumn col4 = new DataGridTextColumn();
             DataGridTextColumn col5 = new DataGridTextColumn();
+
+
             col1.Header = "Название"; col1.Binding = new Binding("zonename"); col1.Width = 210;
             ZonesDGV.Columns.Add(col1);
             col2.Header = "Тип"; col2.Binding = new Binding("zonetypeid"); col2.Width = 210;
@@ -213,8 +223,9 @@ namespace AvalonCore
             ZonesDGV.Columns.Add(col4);
             col5.Header = "60 мин"; col5.Binding = new Binding("sixtyminprice"); col5.Width = 210;
             ZonesDGV.Columns.Add(col5);
-            DGV1.MaxColumnWidth = 210; DGV1.MinColumnWidth = 210;
 
+
+            DGV1.MaxColumnWidth = 210; DGV1.MinColumnWidth = 210;
 
 
             try
@@ -260,8 +271,6 @@ namespace AvalonCore
                 MessageBox.Show(ex.Message);
             }
         }
-
-
 
 
         private void TryToFillClient(object sender, TextChangedEventArgs e)
@@ -330,7 +339,7 @@ namespace AvalonCore
                     MessageBox.Show(cid.ToString());
                     //if (reader.HasRows)
                     //    while (reader.Read())
-                            strsql = "INSERT INTO [orders] VALUES('" + cid.ToString() + "','" + zid.ToString() + "','" + CBTime.Text.ToString().Remove(2) + "','" + TBOrderDesc.Text +" "+ CB2.Text.ToString() +"')";
+                            strsql = "INSERT INTO orders VALUES('" + cid.ToString() + "','" + zid.ToString() + "','" + CBTime.Text.ToString().Remove(2) + "','" + TBOrderDesc.Text +" "+ CB2.Text.ToString() +"')";
                     con.Close(); con.Open();
                     cmd = new SqlCommand(strsql, con);
                     if (cmd.ExecuteNonQuery() == 1)
@@ -345,6 +354,24 @@ namespace AvalonCore
             else MessageBox.Show("Неверно введены данные");
         }
 
+        private void AddGamesButton(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(conn);
+                con.Open();
+                string strsql = "if 0=(select count(num) from games where gamename = '" + GNTB.Text + "') INSERT INTO [games] VALUES(" + "'" + GNTB.Text + "','" + GDTB.Text + "')";
+                SqlCommand cmd = new SqlCommand(strsql, con);
+                if (cmd.ExecuteNonQuery() == 1)
+                    MessageBox.Show("Запись успешно добавлена.");
+                con.Close();
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private void ReloadMainClick(object sender, RoutedEventArgs e)
         {
             DGV1.Columns.Clear();
@@ -353,5 +380,14 @@ namespace AvalonCore
             CB2.Items.Clear();
             FillMainGrid();
         }
+
+        private void ReloadGamesButton(object sender, RoutedEventArgs e)
+        {
+            GamesDGV.Columns.Clear();
+            GamesDGV.Items.Clear();
+            FillGamesGrid();
+        }
+
+      
     }
 }
