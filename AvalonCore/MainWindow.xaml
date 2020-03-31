@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AvalonCore"
-        mc:Ignorable="d" Height="920" Width="1700" FontFamily="Wingdings 2" FontSize="20" Icon="avalon-logo.png" ResizeMode="NoResize" BorderBrush="#FF464646" Background="#FF464646" WindowStyle="None">
+        mc:Ignorable="d" Height="920" Width="1700" FontFamily="Wingdings 2" FontSize="20" Icon="Icons/avalon-logo.png" ResizeMode="NoResize" BorderBrush="#FF464646" Background="#FF464646" WindowStyle="None">
     <Grid Background="#FF212021" Margin="2,-1,-2,1" Width="1700" Height="920" HorizontalAlignment="Left" OpacityMask="Black">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -22,15 +22,15 @@
             <MenuItem Header="Главная" Foreground="White" FontSize="25" Margin="200,20,200,20" Click="Main_Click"/>
             <MenuItem Header="Игры" RenderTransformOrigin="0.5,0.5" Foreground="White" FontSize="25" Margin="-150,20,70,20" Click="Games_Click"/>
             <MenuItem Header="Зоны" Foreground="White" FontSize="25" Margin="-20,20,70,20" Click="Zone_Click" />
-            <Image Height="80" Width="180" Margin="-1085,0,0,0" Source="avalon-logo.png" Stretch="Fill"/>
+            <Image Height="80" Width="180" Margin="-1085,0,0,0" Source="Icons/avalon-logo.png" Stretch="Fill"/>
             <Button Name="CloseButton" Width="35" Height="35" HorizontalAlignment="Right" Margin="-1020" Click="CloseButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
-                <Image Source="cross.png" Height="30" Width="30"/>
+                <Image Source="Icons/cross.png" Height="30" Width="30"/>
             </Button>
             <Button Width="35" Height="35" HorizontalAlignment="Right" Margin="-950" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" Click="Button_Click">
-                <Image Source="line.png" Height="30" Width="30"/>
+                <Image Source="Icons/line.png" Height="30" Width="30"/>
             </Button>
         </Menu>
-        <Grid x:Name="MainWindowGrid" HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Visibility="Visible">
+        <Grid x:Name="MainWindowGrid" HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Visibility="Hidden">
             <DataGrid x:Name="DGV1" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="721" Margin="20,24,0,0" Width="1052" BorderBrush="#FF464646" Foreground="#FF232323" HorizontalGridLinesBrush="#FF111111" VerticalGridLinesBrush="#FF363535" OpacityMask="Gray" VerticalAlignment="Top" FontFamily="Segoe UI">
                 <DataGrid.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -65,7 +65,10 @@
             <ComboBox x:Name="CB2" HorizontalAlignment="Left" Margin="1254,297,0,0" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI"/>
             <Button Content="Сохранить изменения" HorizontalAlignment="Left" Margin="1149,647,0,0" VerticalAlignment="Top" Width="481" FontFamily="Segoe UI" Click="AddOrderButton"/>
             <Label x:Name="labelfio" Content="" HorizontalAlignment="Left" Margin="1252,46,0,0" VerticalAlignment="Top" FontFamily="Segoe UI" Opacity="50"/>
-            <Button Content="Обновить" HorizontalAlignment="Left" Margin="1273,700,0,0" VerticalAlignment="Top" Width="243" FontFamily="Segoe UI" Click="ReloadMainClick"/>
+            <Button Content="Обновить" HorizontalAlignment="Left" Margin="1149,700,0,0" VerticalAlignment="Top" Width="481" FontFamily="Segoe UI" Click="ReloadMainClick"/>
+            <Button Content="Отчет" HorizontalAlignment="Left" Margin="1425,592,0,0" VerticalAlignment="Top" Width="205" FontFamily="Segoe UI" Click="ReportButtonClick"/>
+            <DatePicker x:Name="DPStart" HorizontalAlignment="Left" Margin="1148,591,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.056,0.414" Width="101" FontFamily="Segoe UI"/>
+            <DatePicker x:Name="DPEnd" HorizontalAlignment="Left" Margin="1280,591,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.056,0.414" Width="101" FontFamily="Segoe UI"/>
         </Grid>
         <Rectangle Height="50" Margin="0,870,215,0" Stroke="#FF3A3A3A" VerticalAlignment="Top">
             <Rectangle.Fill>
@@ -75,7 +78,7 @@
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
-        <Grid HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Name="GamesGrid" Visibility="Hidden">
+        <Grid HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Name="GamesGrid" Visibility="Visible">
             <DataGrid x:Name="GamesDGV" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="721" Margin="20,24,0,0" Width="1052" BorderBrush="#FF464646" Foreground="Black" HorizontalGridLinesBrush="#FF111111" VerticalGridLinesBrush="#FF363535" OpacityMask="Gray" VerticalAlignment="Top" FontFamily="Segoe UI">
                 <DataGrid.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -96,7 +99,8 @@
             <TextBox x:Name="GNTB" HorizontalAlignment="Left" Height="29" Margin="1254,51,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI"/>
             <Label Content="Описание" HorizontalAlignment="Left" Margin="1148,109,0,0" VerticalAlignment="Top" FontFamily="Segoe UI" Foreground="White"/>
             <TextBox x:Name="GDTB" HorizontalAlignment="Left" Height="209" Margin="1254,115,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI"/>
-            <Button Content="Сохранить изменения" HorizontalAlignment="Left" Margin="1148,392,0,0" VerticalAlignment="Top" Width="482" FontFamily="Segoe UI"/>
+            <Button Content="Сохранить изменения" HorizontalAlignment="Left" Margin="1148,392,0,0" VerticalAlignment="Top" Width="482" FontFamily="Segoe UI" Click="AddGamesButton"/>
+            <Button Content="Обновить" HorizontalAlignment="Left" Margin="1254,450,0,0" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI" Click="ReloadGamesButton"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="780" Margin="10,85,0,0" VerticalAlignment="Top" Width="1690" Name="ZonesGrid" Visibility="Hidden">
             <DataGrid x:Name="ZonesDGV" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="721" Margin="20,24,0,0" Width="1052" BorderBrush="#FF464646" Foreground="Black" HorizontalGridLinesBrush="#FF111111" VerticalGridLinesBrush="#FF363535" OpacityMask="Gray" VerticalAlignment="Top" FontFamily="Segoe UI">
@@ -115,7 +119,7 @@
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
-            <Label x:Name="JustLabel" Content="Клиент" HorizontalAlignment="Left" Margin="1148,45,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Segoe UI"/>
+            <Label x:Name="JustLabel" Content="Имя" HorizontalAlignment="Left" Margin="1148,45,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Segoe UI"/>
             <TextBox x:Name="ZNTB" HorizontalAlignment="Left" Height="29" Margin="1254,51,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI"/>
             <Label x:Name="JustLabel_Copy" Content="Тип" HorizontalAlignment="Left" Margin="1148,97,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Segoe UI"/>
             <ComboBox x:Name="ZTCB" HorizontalAlignment="Left" Margin="1254,101,0,0" VerticalAlignment="Top" Width="376" FontFamily="Segoe UI"/>

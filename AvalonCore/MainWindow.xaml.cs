@@ -12,7 +12,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+
 using System.Data.SqlClient;
+using Word = Microsoft.Office.Interop.Word;
+using System.Reflection;
+
 
 namespace AvalonCore
 {
@@ -36,6 +41,8 @@ namespace AvalonCore
             public string zone { get; set; }
             public string playtime { get; set; }
             public string orderdesc { get; set; }
+            public string date { get; set; }
+            public string price { get; set; }
         }
         public class Game
         {
@@ -91,19 +98,26 @@ namespace AvalonCore
             DataGridTextColumn col2 = new DataGridTextColumn();
             DataGridTextColumn col3 = new DataGridTextColumn();
             DataGridTextColumn col4 = new DataGridTextColumn();
-           
+            DataGridTextColumn col5 = new DataGridTextColumn();
+            DataGridTextColumn col6 = new DataGridTextColumn();
 
-            col1.Header = "ФИО"; col1.Binding = new Binding("client"); col1.Width = 261;
+
+            col1.Header = "ФИО"; col1.Binding = new Binding("client"); col1.Width = 174;
             DGV1.Columns.Add(col1);
-            col2.Header = "Зона"; col2.Binding = new Binding("zone"); col2.Width = 261;
+            col2.Header = "Зона"; col2.Binding = new Binding("zone"); col2.Width = 174;
             DGV1.Columns.Add(col2);
-            col3.Header = "Время"; col3.Binding = new Binding("playtime"); col3.Width = 261;
+            col3.Header = "Время"; col3.Binding = new Binding("playtime"); col3.Width = 174;
             DGV1.Columns.Add(col3);
-            col4.Header = "Описание"; col4.Binding = new Binding("orderdesc"); col4.Width = 261;
+            col4.Header = "Описание"; col4.Binding = new Binding("orderdesc"); col4.Width = 174;
             DGV1.Columns.Add(col4);
+            col5.Header = "Дата"; col5.Binding = new Binding("date"); col5.Width = 174;
+            DGV1.Columns.Add(col5);
+            col6.Header = "Цена"; col6.Binding = new Binding("price"); col6.Width = 174;
+            DGV1.Columns.Add(col6);
 
 
-            DGV1.MaxColumnWidth = 261; DGV1.MinColumnWidth = 261;
+
+            DGV1.MaxColumnWidth = 174; DGV1.MinColumnWidth = 174;
 
 
             //DGV1.RowBackground = Brushes.Gray;
@@ -141,8 +155,7 @@ namespace AvalonCore
                 }
                 con.Close(); con.Open();
 
-
-                get = "Select * from orders"; // Заполнение CB2
+                get = "Select * from orders where date = '" + NowSQL()+"'"; // Заполнение CB2
                 string getcbyid, getzbyid, time, desc, fio, zone;
                 cmd = new SqlCommand(get, con);
                 reader = cmd.ExecuteReader();
@@ -162,7 +175,7 @@ namespace AvalonCore
                         cmd = new SqlCommand(getzbyid, con1);
                         object getzone = cmd.ExecuteScalar();
                         zone = getzone.ToString();
-                        DGV1.Items.Add(new Order() { client = fio, zone = zone, playtime = time, orderdesc = desc });
+                        DGV1.Items.Add(new Order() { client = fio, zone = zone, playtime = time, orderdesc = desc, date = reader.GetValue(5).ToString().Remove(10), price = reader.GetValue(6).ToString() });
                     }
                 }
             }
@@ -257,7 +270,7 @@ namespace AvalonCore
                     while (reader.Read())
                     {
                         string getbyzoneid = "Select zonetypename from zonetypes where zonetypeid=" + reader.GetValue(1).ToString();
-                        con1.Open();
+                        con1.Close(); con1.Open();
                         cmd = new SqlCommand(getbyzoneid, con1);
                         object getzonetype = cmd.ExecuteScalar();
                         ZonesDGV.Items.Add(new Zone { zonename = reader.GetValue(0).ToString(), zonetypeid = getzonetype.ToString(), tenminprice = reader.GetValue(2).ToString(),
@@ -330,20 +343,39 @@ namespace AvalonCore
                     SqlConnection con = new SqlConnection(conn);
                     con.Open();
                     //string strsql = "select clientid from clients where fio = '" + TB1.Text + "'"+"select zoneid from zones where zonename = '" + CB1.Text + "'";
-                    string strsql = "select clientid from clients where fio = '" + TB1.Text+"'";
-                    string getzid = "select zoneid from zones where zonename = '" + CB1.Text+"'";
+                    string strsql = "select clientid from clients where fio = '" + TB1.Text + "'";
+                    string getzid = "select zoneid,tenminprice,thirtyminprice,sixtyminprice from zones where zonename = '" + CB1.Text + "'";
                     SqlCommand cmd = new SqlCommand(strsql, con);
                     SqlCommand cmd1 = new SqlCommand(getzid, con);
                     object cid = cmd.ExecuteScalar();
-                    object zid = cmd1.ExecuteScalar();
+                    SqlDataReader zid = cmd1.ExecuteReader();
                     MessageBox.Show(cid.ToString());
-                    //if (reader.HasRows)
-                    //    while (reader.Read())
-                            strsql = "INSERT INTO orders VALUES('" + cid.ToString() + "','" + zid.ToString() + "','" + CBTime.Text.ToString().Remove(2) + "','" + TBOrderDesc.Text +" "+ CB2.Text.ToString() +"')";
+                    if (zid.HasRows)
+                        while (zid.Read())
+                        {
+                            string price = "0";
+                            if (CBTime.Text.ToString().Remove(2) == "10")
+                                price = zid.GetValue(1).ToString();
+                            else
+                                if (CBTime.Text.ToString().Remove(2) == "30")
+                                price = zid.GetValue(2).ToString();
+                            else
+                                price = zid.GetValue(3).ToString();
+                            strsql = "INSERT INTO orders VALUES('" + cid.ToString() + "','" + zid.GetValue(0).ToString() + "','" + CBTime.Text.ToString().Remove(2) + "','" + TBOrderDesc.Text + " " + CB2.Text.ToString() + "','" + DateTime.Now.Date.ToString().Replace('.', '-') + "'" + price + "')";
+                        }
                     con.Close(); con.Open();
                     cmd = new SqlCommand(strsql, con);
                     if (cmd.ExecuteNonQuery() == 1)
+                    {
                         MessageBox.Show("Запись успешно добавлена.");
+                        //// Добавить Чек
+                        //var app = new Word.Application();
+                        //app.Visible = true;
+                        //var doc = app.Documents.Add();
+                        //var r = doc.Range();
+                        //r.Text = "Avalon-VR/n"+DateTime.Now+"/n Сумма = "+CB2.Text.ToString()+"/n ЦБ_РБ";
+                        //doc.SaveAs (@"D:\Check "+DateTime.Now);
+                    }
                     con.Close();
                 }
                 catch (SqlException ex)
@@ -360,7 +392,7 @@ namespace AvalonCore
             {
                 SqlConnection con = new SqlConnection(conn);
                 con.Open();
-                string strsql = "if 0=(select count(num) from games where gamename = '" + GNTB.Text + "') INSERT INTO [games] VALUES(" + "'" + GNTB.Text + "','" + GDTB.Text + "')";
+                string strsql = "if 0=(select count(gamename) from games where gamename = '" + GNTB.Text + "') INSERT INTO [games] VALUES(" + "'" + GNTB.Text + "','" + GDTB.Text + "')";
                 SqlCommand cmd = new SqlCommand(strsql, con);
                 if (cmd.ExecuteNonQuery() == 1)
                     MessageBox.Show("Запись успешно добавлена.");
@@ -387,7 +419,61 @@ namespace AvalonCore
             GamesDGV.Items.Clear();
             FillGamesGrid();
         }
-
-      
+        private string DateToSQLFormate(string date)
+        {
+            string day = date.Remove(2);
+            string month = date[3].ToString() + date[4].ToString();
+            string year = date[6].ToString() + date[7].ToString() + date[8].ToString() + date[9].ToString();
+            date = year+"-"+month+"-"+day;
+            return date;
+        }
+        private string NowSQL()
+        {
+            string Nowadate = DateTime.Now.Date.Year + "-" + DateTime.Now.Date.Month + "-" + DateTime.Now.Date.Day;
+            return Nowadate;
+        }
+        private void ReportButtonClick(object sender, RoutedEventArgs e)
+        {
+            // Отчет
+            var app = new Word.Application();
+            app.Visible = true;
+            var doc = app.Documents.Add();
+            var r = doc.Range();
+            r.Text = "Avalon-VR" + " Дата начала = " + DPStart.Text.ToString() + " Дата конца= "+DPEnd.Text.ToString();
+            string get = "Select * from orders where date > '" + DateToSQLFormate(DPStart.Text.ToString()).ToString() + "' and date < '"+ DateToSQLFormate(DPEnd.Text.ToString()).ToString()+"'";
+            try
+            {
+                SqlConnection con = new SqlConnection(conn);
+                SqlConnection con1 = new SqlConnection(conn);
+                con.Open();
+                get = "Select * from orders where date > '" + DateToSQLFormate(DPStart.Text.ToString()).ToString() + "' and date < '" + DateToSQLFormate(DPEnd.Text.ToString()).ToString() + "'"; ;
+                string getcbyid, getzbyid, time, desc, fio, zone;
+                SqlCommand cmd = new SqlCommand(get, con);
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        getcbyid = "Select fio from clients where clientid=" + reader.GetValue(1).ToString();
+                        getzbyid = "Select zonename from zones where zoneid=" + reader.GetValue(2).ToString();
+                        time = reader.GetValue(3).ToString();
+                        desc = reader.GetValue(4).ToString();
+                        con1.Close(); con1.Open();
+                        cmd = new SqlCommand(getcbyid, con1);
+                        object getfio = cmd.ExecuteScalar();
+                        fio = getfio.ToString();
+                        con1.Close(); con1.Open();
+                        cmd = new SqlCommand(getzbyid, con1);
+                        object getzone = cmd.ExecuteScalar();
+                        zone = getzone.ToString();
+                        r.Text += " ФИО " + fio + " Зона " + zone + " Время " + time + " Описание " + desc + " Дата " + reader.GetValue(5).ToString().Remove(10) + " Цена " + reader.GetValue(6).ToString();
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }
