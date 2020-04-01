@@ -18,6 +18,7 @@ using System.IO;
 using System.Data.SqlClient;
 using Word = Microsoft.Office.Interop.Word;
 using System.Reflection;
+using System.Data;
 
 
 namespace AvalonCore
@@ -40,6 +41,7 @@ namespace AvalonCore
             FillSpecialOrdersGrid();
         }
 
+        //CLASSES
         public class Order
         {
             public string client { get; set; }
@@ -85,6 +87,8 @@ namespace AvalonCore
             public string price { get; set; }
         }
 
+
+        //FRAME WINDOW
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -96,7 +100,7 @@ namespace AvalonCore
 
         public AvalonVRDS AVRDS = new AvalonVRDS(); // rename DataSet to use in future
 
-
+        //MENU
         private void Games_Click(object sender, RoutedEventArgs e)
         {
             GamesGrid.Visibility = Visibility.Visible;
@@ -153,8 +157,8 @@ namespace AvalonCore
         }
 
 
-
-        public void FillMainGrid()  // Заполнение Грида значениями датасета
+        //FILLS
+        public void FillMainGrid()
         {
             DataGridTextColumn col1 = new DataGridTextColumn();
             DataGridTextColumn col2 = new DataGridTextColumn();
@@ -491,7 +495,7 @@ namespace AvalonCore
         }
 
 
-
+        //FUNCTIONS
         private void TryToFillClient(object sender, TextChangedEventArgs e)
         {
             string fio = TB1.Text;
@@ -648,7 +652,12 @@ namespace AvalonCore
             app.Visible = true;
             var doc = app.Documents.Add();
             var r = doc.Range();
-            r.Text = "Avalon-VR" + " Дата начала = " + DPStart.Text.ToString() + " Дата конца= "+DPEnd.Text.ToString();
+            r.Text = "                                                                                              ОТЧЕТ"+Environment.NewLine+ "                                                                                по оказанным услугам"
+                + Environment.NewLine+
+                "Исполнитель: ООО Авалон Виар" + Environment.NewLine+"Город: Минск"+Environment.NewLine+"Дата формирования отчета: "+DateTime.Now.Date.ToString().Remove(10)+Environment.NewLine+
+                "Дата начала: " + DPStart.Text.ToString() + Environment.NewLine+ "Дата конца: " +DPEnd.Text.ToString()+Environment.NewLine+"Список предоставленных услуг:"+
+                Environment.NewLine+"         ФИО                     Зона                       Время                 Описание                   Дата                       Цена"
+                +Environment.NewLine+"%Таблица%";
             string get = "Select * from orders where date > '" + DateToSQLFormate(DPStart.Text.ToString()).ToString() + "' and date < '"+ DateToSQLFormate(DPEnd.Text.ToString()).ToString()+"'";
             try
             {
@@ -659,6 +668,10 @@ namespace AvalonCore
                 string getcbyid, getzbyid, time, desc, fio, zone;
                 SqlCommand cmd = new SqlCommand(get, con);
                 SqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Columns.Add("ФИО"); dt.Columns.Add("Зона"); dt.Columns.Add("Время"); dt.Columns.Add("Описание"); dt.Columns.Add("Дата"); dt.Columns.Add("Цена");
+                //r.Tables.Add(r.Application.ActiveDocument.Range(),1,6);
+                //r.Tables[1].Borders.OutsideColor = Word.WdColor.wdColorBlack;
                 if (reader.HasRows)
                 {
                     while (reader.Read())
@@ -675,7 +688,20 @@ namespace AvalonCore
                         cmd = new SqlCommand(getzbyid, con1);
                         object getzone = cmd.ExecuteScalar();
                         zone = getzone.ToString();
-                        r.Text += " ФИО " + fio + " Зона " + zone + " Время " + time + " Описание " + desc + " Дата " + reader.GetValue(5).ToString().Remove(10) + " Цена " + reader.GetValue(6).ToString();
+                        //r.Text+= "ФИО " + fio + " Зона " + zone + " Время " + time + " Описание " + desc + " Дата " + reader.GetValue(5).ToString().Remove(10) + " Цена " + reader.GetValue(6).ToString();
+                        dt.Rows.Add(fio, zone, time, desc, reader.GetValue(5).ToString().Remove(10), reader.GetValue(6).ToString());
+                    }
+                    app.Selection.Find.Execute("%Таблица%");
+                    Word.Range wordRange = app.Selection.Range;
+                    var wordTable = doc.Tables.Add(wordRange,
+                    dt.Rows.Count, dt.Columns.Count);
+                    wordTable.Borders.Enable = 1;
+                    for (var j = 0; j < dt.Rows.Count; j++)
+                    {
+                        for (var k = 0; k < dt.Columns.Count; k++)
+                        {
+                            wordTable.Cell(j + 1, k + 1).Range.Text = dt.Rows[j][k].ToString();
+                        }
                     }
                 }
             }
