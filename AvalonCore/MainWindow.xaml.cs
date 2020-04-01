@@ -653,8 +653,9 @@ namespace AvalonCore
             var doc = app.Documents.Add();
             var r = doc.Range();
             r.Text = "                                                                                              ОТЧЕТ"+Environment.NewLine+ "                                                                                по оказанным услугам"
-                + Environment.NewLine+
-                "Исполнитель: ООО Авалон Виар" + Environment.NewLine+"Город: Минск"+Environment.NewLine+"Дата формирования отчета: "+DateTime.Now.Date.ToString().Remove(10)+Environment.NewLine+
+                + Environment.NewLine+"г.Минск                                                                                                                                                     "
+                +DateTime.Now.Date.ToString().Remove(10) + Environment.NewLine +
+                "Исполнитель: ООО Авалон Виар" +Environment.NewLine+
                 "Дата начала: " + DPStart.Text.ToString() + Environment.NewLine+ "Дата конца: " +DPEnd.Text.ToString()+Environment.NewLine+"Список предоставленных услуг:"+
                 Environment.NewLine+"         ФИО                     Зона                       Время                 Описание                   Дата                       Цена"
                 +Environment.NewLine+"%Таблица%";
