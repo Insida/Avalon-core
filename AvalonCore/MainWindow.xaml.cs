@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 
 
 using System.Data.SqlClient;
@@ -26,6 +27,7 @@ namespace AvalonCore
     /// </summary>
     public partial class MainWindow : Window
     {
+        Encoding enc = Encoding.GetEncoding(1251);
         const string conn = @"Server=(localdb)\mssqllocaldb;database=AvalonVR;";
         public MainWindow()
         {
@@ -33,6 +35,9 @@ namespace AvalonCore
             FillMainGrid();
             FillGamesGrid();
             FillZonesGrid();
+            UsersFill();
+            FillPartnersGrid();
+            FillSpecialOrdersGrid();
         }
 
         public class Order
@@ -57,8 +62,28 @@ namespace AvalonCore
             public string thirtyminprice { get; set; }
             public string sixtyminprice { get; set; }
         }
-
-
+        public class User
+        {
+            public string username { get; set; }
+            public string usertypeid { get; set; }
+        }
+        public class Partner
+        {
+            public string clientid { get; set; }
+            public string partnername { get; set; }
+            public string adress { get; set; }
+            public string bank { get; set; }
+            public string banknum { get; set; }
+            public string unp { get; set; }
+        }
+        public class specialorder
+        {
+            public string partnersid { get; set; }
+            public string specialorderdesc { get; set; }
+            public string specialordertime { get; set; }
+            public string specialorderdate { get; set; }
+            public string price { get; set; }
+        }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
@@ -74,22 +99,59 @@ namespace AvalonCore
 
         private void Games_Click(object sender, RoutedEventArgs e)
         {
-            MainWindowGrid.Visibility = Visibility.Hidden;
             GamesGrid.Visibility = Visibility.Visible;
+            SpecialOrdersGrid.Visibility = Visibility.Hidden;
+            PartnersGrid.Visibility = Visibility.Hidden;
+            MainWindowGrid.Visibility = Visibility.Hidden;
             ZonesGrid.Visibility = Visibility.Hidden;
+            UsersGrid.Visibility = Visibility.Hidden;
         }
         private void Main_Click(object sender, RoutedEventArgs e)
         {
             MainWindowGrid.Visibility = Visibility.Visible;
+            SpecialOrdersGrid.Visibility = Visibility.Hidden;
+            PartnersGrid.Visibility = Visibility.Hidden;
             GamesGrid.Visibility = Visibility.Hidden;
             ZonesGrid.Visibility = Visibility.Hidden;
+            UsersGrid.Visibility = Visibility.Hidden;
         }
         private void Zone_Click(object sender, RoutedEventArgs e)
         {
+            ZonesGrid.Visibility = Visibility.Visible;
+            SpecialOrdersGrid.Visibility = Visibility.Hidden;
+            PartnersGrid.Visibility = Visibility.Hidden;
             MainWindowGrid.Visibility = Visibility.Hidden;
             GamesGrid.Visibility = Visibility.Hidden;
-            ZonesGrid.Visibility = Visibility.Visible;
+            UsersGrid.Visibility = Visibility.Hidden;
         }
+        private void UsersClick(object sender, RoutedEventArgs e)
+        {
+            UsersGrid.Visibility = Visibility.Visible;
+            SpecialOrdersGrid.Visibility = Visibility.Hidden;
+            PartnersGrid.Visibility = Visibility.Hidden;
+            MainWindowGrid.Visibility = Visibility.Hidden;
+            GamesGrid.Visibility = Visibility.Hidden;
+            ZonesGrid.Visibility = Visibility.Hidden;
+        }
+        private void SpecialClick(object sender, RoutedEventArgs e)
+        {
+            SpecialOrdersGrid.Visibility = Visibility.Visible;
+            PartnersGrid.Visibility = Visibility.Hidden;
+            UsersGrid.Visibility = Visibility.Hidden;
+            MainWindowGrid.Visibility = Visibility.Hidden;
+            GamesGrid.Visibility = Visibility.Hidden;
+            ZonesGrid.Visibility = Visibility.Hidden;
+        }
+        private void PartnersClick(object sender, RoutedEventArgs e)
+        {
+            PartnersGrid.Visibility = Visibility.Visible;
+            SpecialOrdersGrid.Visibility = Visibility.Hidden;
+            UsersGrid.Visibility = Visibility.Hidden;
+            MainWindowGrid.Visibility = Visibility.Hidden;
+            GamesGrid.Visibility = Visibility.Hidden;
+            ZonesGrid.Visibility = Visibility.Hidden;
+        }
+
 
 
         public void FillMainGrid()  // Заполнение Грида значениями датасета
@@ -284,6 +346,150 @@ namespace AvalonCore
                 MessageBox.Show(ex.Message);
             }
         }
+        private void UsersFill()
+        {
+            DataGridTextColumn col1 = new DataGridTextColumn();
+            DataGridTextColumn col2 = new DataGridTextColumn();
+            col1.Header = "Пользователь"; col1.Binding = new Binding("username"); col1.Width = 522;
+            UsersDGV.Columns.Add(col1);
+            col2.Header = "Тип"; col2.Binding = new Binding("usertypeid"); col2.Width = 522;
+            UsersDGV.Columns.Add(col2);
+            try
+            {
+                SqlConnection con = new SqlConnection(conn);
+                SqlConnection con1 = new SqlConnection(conn);
+                con.Open();
+                string get = "Select usertypename from usertypes"; // Заполнение CB
+                SqlCommand cmd = new SqlCommand(get, con);
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        UTCB.Items.Add(reader.GetValue(0).ToString());
+                    }
+                }
+                con.Close(); con.Open();
+                get = "select * from users";
+                cmd = new SqlCommand(get, con);
+                reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        con1.Close(); con1.Open();
+                        string usertype = "select usertypename from usertypes where usertypeid=" + reader.GetValue(3).ToString();
+                        cmd = new SqlCommand(usertype, con1);
+                        object getusertype = cmd.ExecuteScalar();
+                        UsersDGV.Items.Add(new User { username = reader.GetValue(1).ToString(), usertypeid = getusertype.ToString() });
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void FillPartnersGrid()
+        {
+            DataGridTextColumn col1 = new DataGridTextColumn();
+            DataGridTextColumn col2 = new DataGridTextColumn();
+            DataGridTextColumn col3 = new DataGridTextColumn();
+            DataGridTextColumn col4 = new DataGridTextColumn();
+            DataGridTextColumn col5 = new DataGridTextColumn();
+            DataGridTextColumn col6 = new DataGridTextColumn();
+            col1.Header = "Наименование"; col1.Binding = new Binding("partnername"); col1.Width = 174;
+            PartnersDGV.Columns.Add(col1);
+            col2.Header = "Ответ.Лицо"; col2.Binding = new Binding("clientid"); col2.Width = 174;
+            PartnersDGV.Columns.Add(col2);
+            col3.Header = "Адрес"; col3.Binding = new Binding("adress"); col3.Width = 174;
+            PartnersDGV.Columns.Add(col3);
+            col4.Header = "Банк"; col4.Binding = new Binding("bank"); col4.Width = 174;
+            PartnersDGV.Columns.Add(col4);
+            col5.Header = "Номер счета"; col5.Binding = new Binding("banknum"); col5.Width = 174;
+            PartnersDGV.Columns.Add(col5);
+            col6.Header = "УНП"; col6.Binding = new Binding("unp"); col6.Width = 174;
+            PartnersDGV.Columns.Add(col6);
+            BankCB.Items.Add("Идея Банк"); BankCB.Items.Add("БелВЭБ"); BankCB.Items.Add("Решение"); BankCB.Items.Add("Дабрабыт"); BankCB.Items.Add("Абсолютбанк"); BankCB.Items.Add("Альфа-Банк"); BankCB.Items.Add("БПС-Сбербанк"); BankCB.Items.Add("БСБ");
+            BankCB.Items.Add("БТА"); BankCB.Items.Add("ВТБ"); BankCB.Items.Add("БелГазпромБанк"); BankCB.Items.Add("БелАгроПромБанк"); BankCB.Items.Add("БеларусБанк"); BankCB.Items.Add("ББМБ"); BankCB.Items.Add("БНБ"); BankCB.Items.Add("РРБ-Банк");
+            BankCB.Items.Add("МТБанк"); BankCB.Items.Add("Статусбанк"); BankCB.Items.Add("ФрансаБанк"); BankCB.Items.Add("ТК"); BankCB.Items.Add("Хоум Кредит"); BankCB.Items.Add("ТехноБанк"); BankCB.Items.Add("ЕвроБанк"); BankCB.Items.Add("Дельта");
+            BankCB.Items.Add("ИнтерПэйБанк"); BankCB.Items.Add("Паритетбанк"); BankCB.Items.Add("НБРБ"); BankCB.Items.Add("ПриорБанк"); BankCB.Items.Add("Цептер");
+            try
+            {
+                SqlConnection con = new SqlConnection(conn);
+                SqlConnection con1 = new SqlConnection(conn);
+                con.Open();
+                string get = "select * from partners";
+                SqlCommand cmd = new SqlCommand(get, con);
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        con1.Close(); con1.Open();
+                        string usertype = "select fio from clients where clientid=" + reader.GetValue(1).ToString();
+                        cmd = new SqlCommand(usertype, con1);
+                        object getusertype = cmd.ExecuteScalar();
+                        PartnersDGV.Items.Add(new Partner {clientid=getusertype.ToString(), partnername=reader.GetValue(2).ToString(), adress = reader.GetValue(3).ToString(), bank = reader.GetValue(4).ToString(), banknum = reader.GetValue(5).ToString(),
+                            unp = reader.GetValue(6).ToString() });
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public void FillSpecialOrdersGrid()
+        {
+            DataGridTextColumn col1 = new DataGridTextColumn();
+            DataGridTextColumn col2 = new DataGridTextColumn();
+            DataGridTextColumn col3 = new DataGridTextColumn();
+            DataGridTextColumn col4 = new DataGridTextColumn();
+            DataGridTextColumn col5 = new DataGridTextColumn();
+            col1.Header = "Партнер"; col1.Binding = new Binding("partnersid"); col1.Width = 208;
+            SpecialOrdersDGV.Columns.Add(col1);
+            col2.Header = "Описание"; col2.Binding = new Binding("specialorderdesc"); col2.Width = 208;
+            SpecialOrdersDGV.Columns.Add(col2);
+            col3.Header = "Время"; col3.Binding = new Binding("specialordertime"); col3.Width = 208;
+            SpecialOrdersDGV.Columns.Add(col3);
+            col4.Header = "Дата"; col4.Binding = new Binding("specialorderdate"); col4.Width = 208;
+            SpecialOrdersDGV.Columns.Add(col4);
+            col5.Header = "Цена"; col5.Binding = new Binding("price"); col5.Width = 208;
+            SpecialOrdersDGV.Columns.Add(col5);
+            try
+            {
+                SqlConnection con = new SqlConnection(conn);
+                SqlConnection con1 = new SqlConnection(conn);
+                con.Open();
+                string get = "select * from specialorders";
+                SqlCommand cmd = new SqlCommand(get, con);
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        con1.Close(); con1.Open();
+                        string usertype = "select partnername from partners where partnerid=" + reader.GetValue(1).ToString();
+                        cmd = new SqlCommand(usertype, con1);
+                        object getusertype = cmd.ExecuteScalar();
+                        SpecialOrdersDGV.Items.Add(new specialorder
+                        {
+                            partnersid = getusertype.ToString(),
+                            specialorderdesc = reader.GetValue(2).ToString(),
+                            specialordertime = reader.GetValue(3).ToString(),
+                            specialorderdate = reader.GetValue(4).ToString().Remove(10),
+                            price = reader.GetValue(5).ToString()
+                        });
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
 
 
         private void TryToFillClient(object sender, TextChangedEventArgs e)
@@ -419,6 +625,7 @@ namespace AvalonCore
             GamesDGV.Items.Clear();
             FillGamesGrid();
         }
+
         private string DateToSQLFormate(string date)
         {
             string day = date.Remove(2);
@@ -427,11 +634,13 @@ namespace AvalonCore
             date = year+"-"+month+"-"+day;
             return date;
         }
+
         private string NowSQL()
         {
             string Nowadate = DateTime.Now.Date.Year + "-" + DateTime.Now.Date.Month + "-" + DateTime.Now.Date.Day;
             return Nowadate;
         }
+
         private void ReportButtonClick(object sender, RoutedEventArgs e)
         {
             // Отчет
